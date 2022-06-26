@@ -11,6 +11,7 @@ import jp.cron.mdcontroller.api.data.entity.UserEntity;
 import jp.cron.mdcontroller.api.data.repo.ServerRepository;
 import jp.cron.mdcontroller.api.data.repo.UserRepository;
 import jp.cron.mdcontroller.command.server.children.ServerCreateCommand;
+import jp.cron.mdcontroller.command.server.children.ServerListCommand;
 import jp.cron.mdcontroller.command.server.children.ServerStartCommand;
 import jp.cron.mdcontroller.command.server.children.ServerStopCommand;
 import jp.cron.mdcontroller.util.EmbedUtil;
@@ -45,11 +46,11 @@ public class ServerCommand extends SlashCommand {
     @Autowired
     DockerClient dockerClient;
     @Autowired
-    public ServerCommand(ServerCreateCommand serverCreateCommand, ServerStartCommand serverStartCommand, ServerStopCommand serverStopCommand) {
+    public ServerCommand(ServerCreateCommand serverCreateCommand, ServerStartCommand serverStartCommand, ServerStopCommand serverStopCommand, ServerListCommand serverListCommand) {
         this.name = "server";
         this.help =  "MCサーバーを管理します。";
         this.guildOnly = false;
-        this.children = new SlashCommand[]{serverCreateCommand, serverStartCommand, serverStopCommand};
+        this.children = new SlashCommand[]{serverCreateCommand, serverStartCommand, serverStopCommand, serverListCommand};
     }
 
     @Override
