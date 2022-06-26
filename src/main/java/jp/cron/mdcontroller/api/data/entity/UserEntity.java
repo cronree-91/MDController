@@ -14,9 +14,13 @@ public class UserEntity {
 
     public enum Permission {
         CREATE_SERVER,
-        CREATE_USER,
         START_SERVER,
         STOP_SERVER,
-        SHOW_SERVER_LIST
+        SHOW_SERVER_LIST,
+        CREATE_USER,
+        UPDATE_USER,
+        DELETE_USER,
+        SET_USER_PERMISSION,
+        SHOW_USER_LIST
     }
 }

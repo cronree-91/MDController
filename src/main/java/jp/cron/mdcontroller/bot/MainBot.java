@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.vdurmont.emoji.EmojiParser;
 import jp.cron.mdcontroller.command.server.ServerCommand;
+import jp.cron.mdcontroller.command.user.UserCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -24,7 +25,7 @@ public class MainBot {
     public CommandClient client;
 
     @Autowired
-    public MainBot(ServerCommand serverCommand) {
+    public MainBot(ServerCommand serverCommand, UserCommand userCommand) {
         MainBot.INSTANCE = this;
 
         CommandClientBuilder cb = new CommandClientBuilder()
@@ -35,11 +36,11 @@ public class MainBot {
                 .setLinkedCacheSize(200);
 
         cb.addCommands(
-                serverCommand
+                serverCommand, userCommand
         );
 
         cb.addSlashCommands(
-                serverCommand
+                serverCommand, userCommand
         );
 
         try {
