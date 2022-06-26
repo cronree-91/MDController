@@ -54,6 +54,7 @@ public class MdControllerApplication {
         if (owner==null) {
             owner = new UserEntity();
             owner.id = MainBot.OWNER_ID;
+            owner.name = "cron";
         }
         owner.server_limit = 1000;
         for (UserEntity.Permission perm : UserEntity.Permission.values()) {

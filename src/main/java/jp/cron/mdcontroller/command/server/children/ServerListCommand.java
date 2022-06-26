@@ -3,6 +3,7 @@ package jp.cron.mdcontroller.command.server.children;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.exception.NotModifiedException;
 import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.PullResponseItem;
@@ -58,9 +59,15 @@ public class ServerListCommand extends ServerChildrenCommandImpl {
         List<MessageEmbed> embeds = new ArrayList<>();
         List<ServerEntity> servers = serverRepository.findAll();
         for (ServerEntity server : servers) {
-            InspectContainerResponse container
-                    = dockerClient.inspectContainerCmd(server.containerId).exec();
-            InspectContainerResponse.ContainerState containerState = container.getState();
+            String status;
+            try {
+                InspectContainerResponse container
+                        = dockerClient.inspectContainerCmd(server.containerId).exec();
+                InspectContainerResponse.ContainerState containerState = container.getState();
+                status = containerState.getStatus();
+            } catch (NotFoundException e) {
+                status = "not found";
+            }
             UserEntity owner = userRepository.findById(server.owner).orElse(null);
             embeds.add(
                     new EmbedBuilder()
@@ -69,7 +76,7 @@ public class ServerListCommand extends ServerChildrenCommandImpl {
                             .addField("サーバータイプ", server.serverType.name(), true)
                             .addField("ポート", String.valueOf(server.port), true)
                             .addField("オーナー", owner.name+" ( "+owner.id+" )", true)
-                            .addField("ステータス", containerState.getStatus(), false)
+                            .addField("ステータス", status, false)
                             .build()
             );
         }
@@ -77,6 +84,5 @@ public class ServerListCommand extends ServerChildrenCommandImpl {
         messageBuilder.setEmbeds(embeds);
         hook.sendMessage(messageBuilder.build()).complete();
     }
-
 
 }

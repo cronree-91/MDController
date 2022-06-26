@@ -17,6 +17,7 @@ public class UserEntity {
         START_SERVER,
         STOP_SERVER,
         SHOW_SERVER_LIST,
+        DELETE_SERVER,
         CREATE_USER,
         UPDATE_USER,
         DELETE_USER,

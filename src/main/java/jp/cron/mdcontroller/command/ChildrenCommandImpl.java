@@ -28,18 +28,25 @@ public abstract class ChildrenCommandImpl extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        UserEntity user = userRepository.findById(event.getUser().getIdLong()).orElse(null);
-        if (user==null) {
+        InteractionHook hook = event.deferReply().complete();
+        try {
+            UserEntity user = userRepository.findById(event.getUser().getIdLong()).orElse(null);
+            if (user == null) {
+                MessageBuilder messageBuilder = new MessageBuilder();
+                messageBuilder.setEmbeds(EmbedUtil.generateErrorEmbed("あなたはデータベース上に登録がありません。"));
+                hook.sendMessage(messageBuilder.build()).complete();
+            } else if (!user.permissions.contains(this.permission)) {
+                MessageBuilder messageBuilder = new MessageBuilder();
+                messageBuilder.setEmbeds(EmbedUtil.generateErrorEmbed("このコマンドを実行するには以下の権限が必要です。\n" + this.permission.toString()));
+                hook.sendMessage(messageBuilder.build()).complete();
+            } else {
+                execute(event, user, hook);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             MessageBuilder messageBuilder = new MessageBuilder();
-            messageBuilder.setEmbeds(EmbedUtil.generateErrorEmbed("あなたはデータベース上に登録がありません。"));
-            event.reply(messageBuilder.build()).complete();
-        } else if (!user.permissions.contains(this.permission)) {
-            MessageBuilder messageBuilder = new MessageBuilder();
-            messageBuilder.setEmbeds(EmbedUtil.generateErrorEmbed("このコマンドを実行するには以下の権限が必要です。\n"+this.permission.toString()));
-            event.reply(messageBuilder.build()).complete();
-        } else {
-            InteractionHook hook = event.deferReply().complete();
-            execute(event, user, hook);
+            messageBuilder.setEmbeds(EmbedUtil.generateErrorEmbed(e.getClass().getCanonicalName()+"\n"+e.getMessage()));
+            hook.sendMessage(messageBuilder.build()).complete();
         }
     }
 

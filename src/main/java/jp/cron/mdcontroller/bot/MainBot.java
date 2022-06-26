@@ -3,6 +3,7 @@ package jp.cron.mdcontroller.bot;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.vdurmont.emoji.EmojiParser;
+import jp.cron.mdcontroller.command.ResetCommand;
 import jp.cron.mdcontroller.command.server.ServerCommand;
 import jp.cron.mdcontroller.command.user.UserCommand;
 import net.dv8tion.jda.api.JDA;
@@ -25,7 +26,7 @@ public class MainBot {
     public CommandClient client;
 
     @Autowired
-    public MainBot(ServerCommand serverCommand, UserCommand userCommand) {
+    public MainBot(ServerCommand serverCommand, UserCommand userCommand, ResetCommand resetCommand) {
         MainBot.INSTANCE = this;
 
         CommandClientBuilder cb = new CommandClientBuilder()
@@ -36,11 +37,11 @@ public class MainBot {
                 .setLinkedCacheSize(200);
 
         cb.addCommands(
-                serverCommand, userCommand
+                serverCommand, userCommand, resetCommand
         );
 
         cb.addSlashCommands(
-                serverCommand, userCommand
+                serverCommand, userCommand, resetCommand
         );
 
         try {
