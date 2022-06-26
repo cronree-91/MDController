@@ -35,7 +35,7 @@ public class UserPermissionCommand extends ChildrenCommandImpl {
 
     @Override
     protected void execute(SlashCommandEvent event, UserEntity authorEntity, InteractionHook hook) {
-        User user = event.getOptionsByName("user").get(0).getAsUser();
+        User user = event.getOptionsByName("target").get(0).getAsUser();
         UserEntity userEntity = userRepository.findById(user.getIdLong()).orElse(null);
         if (userEntity == null) {
             hook.sendMessage(EmbedUtil.generateMessageWithSingleEmbed(":o:", EmbedUtil.generateErrorEmbed("ユーザが見つかりませんでした。"))).complete();
