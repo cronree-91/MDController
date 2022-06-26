@@ -50,8 +50,6 @@ public class MdControllerApplication {
     @PostConstruct
     @Autowired
     public void init() {
-        serverRepository.deleteAll();
-
         UserEntity owner = userRepository.findById(MainBot.OWNER_ID).orElse(null);
         if (owner==null) {
             owner = new UserEntity();
