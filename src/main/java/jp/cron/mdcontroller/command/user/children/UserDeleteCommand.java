@@ -23,13 +23,13 @@ public class UserDeleteCommand extends ChildrenCommandImpl {
         super(userRepository, "delete", "ユーザを削除します。", UserEntity.Permission.DELETE_USER);
         this.userRepository = userRepository;
         List<OptionData> options = new ArrayList<>();
-        options.add(new OptionData(OptionType.USER, "delete", "ユーザを指定してください。", true));
+        options.add(new OptionData(OptionType.USER, "user_to_delete", "ユーザを指定してください。", true));
         this.options = options;
     }
 
     @Override
     protected void execute(SlashCommandEvent event, UserEntity authorEntity, InteractionHook hook) {
-        User user = event.getOptionsByName("delete").get(0).getAsUser();
+        User user = event.getOptionsByName("user_to_delete").get(0).getAsUser();
         UserEntity userEntity = userRepository.findById(user.getIdLong()).orElse(null);
         if (userEntity == null) {
             hook.sendMessage(EmbedUtil.generateMessageWithSingleEmbed(":o:", EmbedUtil.generateErrorEmbed("ユーザが見つかりませんでした。"))).complete();
