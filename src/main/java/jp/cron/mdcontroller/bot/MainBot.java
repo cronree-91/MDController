@@ -2,6 +2,7 @@ package jp.cron.mdcontroller.bot;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.vdurmont.emoji.EmojiParser;
 import jp.cron.mdcontroller.command.ResetCommand;
 import jp.cron.mdcontroller.command.server.ServerCommand;
@@ -12,26 +13,42 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.LoginException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 @Service
 public class MainBot {
     public static MainBot INSTANCE;
-    public static Long OWNER_ID = 731503872098697226L;
 
     public JDA bot;
     public CommandClient client;
 
     @Autowired
-    public MainBot(ServerCommand serverCommand, UserCommand userCommand, ResetCommand resetCommand) {
+    ServerCommand serverCommand;
+    @Autowired
+    UserCommand userCommand;
+    @Autowired
+    ResetCommand resetCommand;
+
+    @Value("${bot.setting.prefix}")
+    String prefix;
+    @Value("${bot.setting.token}")
+    String token;
+    @Value("${bot.setting.ownerId}")
+    String ownerId;
+
+    @PostConstruct
+    public void start() throws LoginException, UnknownHostException {
         MainBot.INSTANCE = this;
 
         CommandClientBuilder cb = new CommandClientBuilder()
-                .setPrefix("$")
-                .setOwnerId(String.valueOf(OWNER_ID))
+                .setPrefix(prefix)
+                .setOwnerId(ownerId)
                 .setActivity(null)
                 .setEmojis(EmojiParser.parseToUnicode(":o:"), EmojiParser.parseToUnicode(":bulb:"), EmojiParser.parseToUnicode(":x:"))
                 .setLinkedCacheSize(200);
@@ -46,7 +63,7 @@ public class MainBot {
 
         try {
             client = cb.build();
-            bot = JDABuilder.create(System.getenv("BOT_TOKEN"), Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES))
+            bot = JDABuilder.create(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOTE, CacheFlag.ONLINE_STATUS)
                     .setActivity(Activity.playing("ロード中..."))

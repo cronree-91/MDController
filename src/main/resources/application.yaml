@@ -1,0 +1,5 @@
+bot:
+  setting:
+    prefix: "$"
+    token: "TOKEN"
+    ownerId: "731503872098697226"

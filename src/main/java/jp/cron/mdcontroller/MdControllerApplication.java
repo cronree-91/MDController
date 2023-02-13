@@ -13,11 +13,16 @@ import jp.cron.mdcontroller.api.data.repo.ServerRepository;
 import jp.cron.mdcontroller.api.data.repo.UserRepository;
 import jp.cron.mdcontroller.bot.MainBot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.Application;
 import java.io.IOException;
 import java.time.Duration;
 
@@ -25,7 +30,8 @@ import java.time.Duration;
 public class MdControllerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MdControllerApplication.class, args);
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(Application.class)
+                .web(WebApplicationType.NONE).run(args);
     }
 
     @Autowired
@@ -47,13 +53,16 @@ public class MdControllerApplication {
 //        return DockerClientBuilder.getInstance().build();
     }
 
+    @Value("${bot.setting.ownerId}")
+    private String ownerId;
+
     @PostConstruct
     @Autowired
     public void init() {
-        UserEntity owner = userRepository.findById(MainBot.OWNER_ID).orElse(null);
+        UserEntity owner = userRepository.findById(Long.valueOf(ownerId)).orElse(null);
         if (owner==null) {
             owner = new UserEntity();
-            owner.id = MainBot.OWNER_ID;
+            owner.id = Long.valueOf(ownerId);
             owner.name = "cron";
         }
         owner.server_limit = 1000;

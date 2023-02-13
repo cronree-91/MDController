@@ -7,6 +7,7 @@ import jp.cron.mdcontroller.bot.MainBot;
 import jp.cron.mdcontroller.util.EmbedUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,9 +22,12 @@ public class ResetCommand extends SlashCommand {
         this.help = "すべてのデータをリセットします。";
     }
 
+    @Value("${bot.setting.ownerId}")
+    String ownerId;
+
     @Override
     protected void execute(SlashCommandEvent event) {
-        if (event.getUser().getIdLong()!= MainBot.OWNER_ID) return;
+        if (event.getUser().getId().equals(ownerId)) return;
         userRepository.deleteAll();
         serverRepository.deleteAll();
         event.replyEmbeds(EmbedUtil.generateSuccessEmbed("すべてのデータをリセットしました。")).complete();
